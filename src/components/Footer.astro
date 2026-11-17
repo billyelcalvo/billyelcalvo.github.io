@@ -1,0 +1,69 @@
+---
+import { SITE, SOCIAL } from '@/consts';
+import { url } from '@/utils/url';
+import Icon from './Icon.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer">
+    <p class="footer__copy">
+      <span class="footer__prompt">$</span> echo "© {year} {SITE.author}"
+    </p>
+    <ul class="footer__links">
+      <li><a href={SOCIAL.github} rel="me noopener" target="_blank" aria-label="GitHub"><Icon name="github" size={17} /></a></li>
+      <li><a href={SOCIAL.linkedin} rel="me noopener" target="_blank" aria-label="LinkedIn"><Icon name="linkedin" size={17} /></a></li>
+      <li><a href={SOCIAL.cylab} rel="me noopener" target="_blank" aria-label="CyLab Academy"><Icon name="award" size={17} /></a></li>
+      <li><a href={url('/rss.xml')} aria-label="RSS"><Icon name="rss" size={17} /></a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 0;
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .footer__copy {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-faint);
+  }
+
+  .footer__prompt {
+    color: var(--accent);
+  }
+
+  .footer__links {
+    display: flex;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer__links a {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    color: var(--text-muted);
+    border-radius: var(--radius);
+  }
+
+  .footer__links a:hover {
+    color: var(--accent);
+    background: var(--surface);
+  }
+</style>

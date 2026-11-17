@@ -1,0 +1,61 @@
+---
+import Icon from './Icon.astro';
+---
+
+<button class="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme">
+  <Icon name="sun" class="icon-sun" size={17} />
+  <Icon name="moon" class="icon-moon" size={17} />
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .theme-toggle:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* En oscuro se muestra el sol (para pasar a claro) y viceversa. */
+  .theme-toggle :global(.icon-moon) {
+    display: none;
+  }
+
+  :global(:root[data-theme='light']) .theme-toggle :global(.icon-sun) {
+    display: none;
+  }
+
+  :global(:root[data-theme='light']) .theme-toggle :global(.icon-moon) {
+    display: block;
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+
+  const apply = (theme: 'dark' | 'light') => {
+    root.dataset.theme = theme;
+    meta?.setAttribute('content', theme === 'light' ? '#fbf8f1' : '#0e0e10');
+    try {
+      localStorage.setItem('theme', theme);
+    } catch {}
+  };
+
+  if (root.dataset.theme === 'light') meta?.setAttribute('content', '#fbf8f1');
+
+  document.querySelectorAll('.theme-toggle').forEach((btn) =>
+    btn.addEventListener('click', () => apply(root.dataset.theme === 'light' ? 'dark' : 'light')),
+  );
+</script>

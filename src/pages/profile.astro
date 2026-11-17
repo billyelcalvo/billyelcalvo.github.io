@@ -1,0 +1,320 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import { SITE, SOCIAL } from '@/consts';
+import { ABOUT, INTERESTS, PROJECTS, SKILLS } from '@/data/profile';
+import { url } from '@/utils/url';
+
+const skillColumns = [
+  { key: 'reversing', ...SKILLS.reversing },
+  { key: 'backend', ...SKILLS.backend },
+] as const;
+---
+
+<BaseLayout title="Profile" description="About Diego Mora: reversing, game hacking, malware dev, Windows internals, pwn and CTFs.">
+  <div class="container profile">
+    <header class="profile__header">
+      <img src={url(SITE.avatar)} alt="Photo of Diego Mora" width="96" height="96" />
+      <div>
+        <p class="eyebrow">$ whoami</p>
+        <h1>Diego Mora</h1>
+        <p class="profile__role">Software Engineering · UPC, Lima</p>
+      </div>
+    </header>
+
+    <section class="block">
+      <h2 class="section-title">about me</h2>
+      <div class="about">
+        {ABOUT.map((p) => <p>{p}</p>)}
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="section-title">areas of interest</h2>
+      <ul class="interests">
+        {
+          INTERESTS.map(({ title, text }) => (
+            <li>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2 class="section-title">technical skills</h2>
+      <div class="skills">
+        {
+          skillColumns.map(({ key, title, groups }) => (
+            <div class:list={['panel', 'skills__col', `skills__col--${key}`]}>
+              <h3>{title}</h3>
+              <dl>
+                {groups.map(({ label, items }) => (
+                  <div class="skills__row">
+                    <dt>{label}</dt>
+                    <dd>
+                      <ul>
+                        {items.map((item) => (
+                          <li>{item}</li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="section-title">featured projects</h2>
+      <ul class="projects">
+        {
+          PROJECTS.map(({ name, description, tags, href }) => (
+            <li>
+              <a class="panel project" href={href} target="_blank" rel="noopener">
+                <h3>
+                  <span class="project__prefix">./</span>
+                  {name}
+                </h3>
+                <p>{description}</p>
+                <ul class="project__tags">
+                  {tags.map((t) => (
+                    <li>{t}</li>
+                  ))}
+                </ul>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2 class="section-title">contact</h2>
+      <p class="contact__text">
+        Want to talk reversing, team up for a CTF, or have a proposal? Reach out on LinkedIn or
+        check out my work on GitHub and CyLab Academy.
+      </p>
+      <div class="contact__actions">
+        <a class="btn" href={SOCIAL.github} target="_blank" rel="me noopener"><Icon name="github" /> github.com/billyelcalvo</a>
+        <a class="btn" href={SOCIAL.linkedin} target="_blank" rel="me noopener"><Icon name="linkedin" /> diego-mora-blas</a>
+        <a class="btn" href={SOCIAL.cylab} target="_blank" rel="me noopener"><Icon name="award" /> CyLab Academy</a>
+        <a class="btn" href={url('/rss.xml')}><Icon name="rss" /> RSS</a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .profile {
+    max-width: 900px;
+  }
+
+  .profile__header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .profile__header img {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .eyebrow {
+    margin: 0 0 4px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-faint);
+  }
+
+  h1 {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+  }
+
+  .profile__role {
+    margin: 4px 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    color: var(--accent);
+  }
+
+  .block {
+    margin-bottom: 52px;
+  }
+
+  .about p {
+    margin: 0 0 1em;
+    color: var(--text-muted);
+    max-width: 68ch;
+  }
+
+  .about p:first-child {
+    color: var(--text);
+  }
+
+  .interests {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .interests li {
+    padding: 14px 16px;
+    border-left: 2px solid var(--accent);
+    background: var(--surface);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  .interests h3 {
+    font-size: 0.9rem;
+  }
+
+  .interests p {
+    margin: 6px 0 0;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+
+  .skills {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+    gap: 14px;
+  }
+
+  .skills__col {
+    padding: 20px;
+  }
+
+  .skills__col--reversing {
+    border-top: 2px solid var(--cat-reversing);
+  }
+
+  .skills__col--backend {
+    border-top: 2px solid var(--text-faint);
+  }
+
+  .skills__col h3 {
+    font-size: 0.95rem;
+    margin-bottom: 14px;
+  }
+
+  .skills dl {
+    margin: 0;
+  }
+
+  .skills__row + .skills__row {
+    margin-top: 14px;
+  }
+
+  .skills dt {
+    margin-bottom: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .skills dd {
+    margin: 0;
+  }
+
+  .skills dd ul,
+  .project__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .skills dd li,
+  .project__tags li {
+    padding: 2px 8px;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .project {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 18px;
+    color: var(--text);
+    transition: border-color 0.15s ease;
+  }
+
+  .project:hover {
+    text-decoration: none;
+    border-color: var(--accent);
+  }
+
+  .project h3 {
+    font-size: 0.95rem;
+  }
+
+  .project:hover h3 {
+    color: var(--accent);
+  }
+
+  .project__prefix {
+    color: var(--text-faint);
+  }
+
+  .project p {
+    flex: 1;
+    margin: 8px 0 14px;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+
+  .contact__text {
+    margin: 0 0 18px;
+    color: var(--text-muted);
+    max-width: 62ch;
+  }
+
+  .contact__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  @media (max-width: 520px) {
+    .profile__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+  }
+</style>

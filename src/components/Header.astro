@@ -1,0 +1,200 @@
+---
+import { NAV_LINKS } from '@/consts';
+import { isActive, url } from '@/utils/url';
+import Icon from './Icon.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+const path = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a href={url('/')} class="brand" aria-label="Home">
+      <span class="brand__addr">0x00</span>
+      <span class="brand__name">diego<span class="brand__dot">.</span>mora</span>
+    </a>
+
+    <ul class="nav__links" id="nav-links">
+      {
+        NAV_LINKS.map(({ href, label }) => (
+          <li>
+            <a
+              href={url(href)}
+              class:list={['nav__link', { active: isActive(path, href) }]}
+              aria-current={isActive(path, href) ? 'page' : undefined}
+            >
+              {label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="nav__actions">
+      <ThemeToggle />
+      <button
+        class="nav__menu"
+        type="button"
+        aria-label="Open menu"
+        aria-controls="nav-links"
+        aria-expanded="false"
+      >
+        <Icon name="menu" class="icon-open" size={18} />
+        <Icon name="close" class="icon-close" size={18} />
+      </button>
+    </div>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    height: var(--nav-h);
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    font-family: var(--font-mono);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .brand:hover {
+    text-decoration: none;
+  }
+
+  .brand__addr {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--text-faint);
+  }
+
+  .brand__dot {
+    color: var(--accent);
+  }
+
+  .nav__links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0 0 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav__link {
+    display: block;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    border-radius: var(--radius-sm);
+  }
+
+  .nav__link:hover {
+    color: var(--text);
+    text-decoration: none;
+    background: var(--surface);
+  }
+
+  .nav__link.active {
+    color: var(--accent);
+  }
+
+  .nav__link.active::before {
+    content: '> ';
+  }
+
+  .nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav__menu {
+    display: none;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+
+  .nav__menu :global(.icon-close) {
+    display: none;
+  }
+
+  @media (max-width: 720px) {
+    .nav__menu {
+      display: inline-grid;
+    }
+
+    .nav__links {
+      position: fixed;
+      top: var(--nav-h);
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      margin: 0;
+      padding: 8px var(--gutter) 16px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: none;
+    }
+
+    .nav__links .nav__link {
+      padding: 12px 8px;
+      font-size: 0.95rem;
+    }
+
+    .site-header[data-open='true'] .nav__links {
+      display: flex;
+    }
+
+    .site-header[data-open='true'] .nav__menu :global(.icon-open) {
+      display: none;
+    }
+
+    .site-header[data-open='true'] .nav__menu :global(.icon-close) {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('.site-header');
+  const button = header?.querySelector<HTMLButtonElement>('.nav__menu');
+
+  const setOpen = (open: boolean) => {
+    if (!header || !button) return;
+    header.dataset.open = String(open);
+    button.setAttribute('aria-expanded', String(open));
+    button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
+
+  button?.addEventListener('click', () => setOpen(header?.dataset.open !== 'true'));
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && setOpen(false));
+  header?.querySelectorAll('.nav__link').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+</script>

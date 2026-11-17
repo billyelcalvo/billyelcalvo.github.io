@@ -1,0 +1,80 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPosts, groupByTag } from '@/utils/posts';
+import { url } from '@/utils/url';
+
+const tags = Array.from(groupByTag(await getPosts())).sort(
+  ([, a], [, b]) => b.posts.length - a.posts.length || a.name.localeCompare(b.name),
+);
+---
+
+<BaseLayout title="Tags" description="All tags on the blog.">
+  <div class="container narrow">
+    <header class="page-header">
+      <p class="eyebrow">$ grep -oh "#\w*" ./posts/* | sort | uniq -c</p>
+      <h1>Tags</h1>
+      <p>{tags.length} tags in total.</p>
+    </header>
+
+    <ul class="tag-cloud">
+      {
+        tags.map(([slug, { name, posts }]) => (
+          <li>
+            <a href={url(`/tags/${slug}`)}>
+              <span class="hash">#</span>
+              {name}
+              <span class="n">{posts.length}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: 860px;
+  }
+
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tag-cloud a {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: 32px;
+    padding: 0 10px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  .tag-cloud a:hover {
+    text-decoration: none;
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .hash {
+    color: var(--text-faint);
+  }
+
+  .n {
+    margin-left: 8px;
+    padding-left: 8px;
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    border-left: 1px solid var(--border);
+  }
+</style>

@@ -1,0 +1,52 @@
+---
+import { hexDate, longDate } from '@/utils/format';
+import Icon from './Icon.astro';
+
+interface Props {
+  date: Date;
+  readingTime: string;
+  draft?: boolean;
+}
+
+const { date, readingTime, draft = false } = Astro.props;
+---
+
+<div class="post-meta">
+  <time datetime={date.toISOString()} title={longDate(date)}>{hexDate(date)}</time>
+  <span class="sep" aria-hidden="true">│</span>
+  <span class="reading"><Icon name="clock" size={12} />{readingTime}</span>
+  {draft && <span class="draft">draft</span>}
+</div>
+
+<style>
+  .post-meta {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-faint);
+  }
+
+  time {
+    color: var(--text-muted);
+  }
+
+  .sep {
+    color: var(--border-strong);
+  }
+
+  .reading {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .draft {
+    padding: 1px 6px;
+    color: var(--accent);
+    border: 1px dashed var(--accent);
+    border-radius: var(--radius-sm);
+  }
+</style>

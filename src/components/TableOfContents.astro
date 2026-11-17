@@ -1,0 +1,113 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const headings = Astro.props.headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{
+  headings.length > 0 && (
+    <nav class="toc" aria-label="Table of contents">
+      <p class="toc__title">contents</p>
+      <ol class="toc__list">
+        {headings.map((h) => (
+          <li class={`depth-${h.depth}`}>
+            <a href={`#${h.slug}`} data-toc-link={h.slug}>
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+
+<style>
+  .toc {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+
+  .toc__title {
+    margin: 0 0 12px;
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .toc__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-left: 1px solid var(--border);
+  }
+
+  .toc__list a {
+    display: block;
+    margin-left: -1px;
+    padding: 5px 0 5px 14px;
+    line-height: 1.45;
+    color: var(--text-muted);
+    border-left: 1px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .toc__list .depth-3 a {
+    padding-left: 28px;
+    font-size: 0.76rem;
+  }
+
+  .toc__list a:hover {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .toc__list a.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+</style>
+
+<script>
+  const links = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
+
+  if (links.length > 0) {
+    const byId = new Map(Array.from(links, (a) => [a.dataset.tocLink!, a]));
+    const targets = Array.from(byId.keys())
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    const setActive = (id: string) => {
+      links.forEach((a) => a.classList.toggle('active', a.dataset.tocLink === id));
+    };
+
+    const onScroll = () => {
+      const offset = 120;
+      let current = targets[0]?.id;
+      for (const el of targets) {
+        if (el.getBoundingClientRect().top - offset <= 0) current = el.id;
+        else break;
+      }
+      if (current) setActive(current);
+    };
+
+    let ticking = false;
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          onScroll();
+          ticking = false;
+        });
+      },
+      { passive: true },
+    );
+    onScroll();
+  }
+</script>

@@ -1,0 +1,94 @@
+---
+import type { Post } from '@/utils/posts';
+import { readingTime } from '@/utils/posts';
+import { url } from '@/utils/url';
+import CategoryBadge from './CategoryBadge.astro';
+import Icon from './Icon.astro';
+import PostMeta from './PostMeta.astro';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { title, description, date, category, draft } = post.data;
+---
+
+<article class="featured" style={`--cat: var(--cat-${category})`}>
+  <div class="featured__label">
+    <span class="featured__pin">[pinned]</span>
+    <CategoryBadge category={category} />
+  </div>
+  <h2 class="featured__title">
+    <a href={url(`/blog/${post.id}`)}>{title}</a>
+  </h2>
+  <p class="featured__desc">{description}</p>
+  <div class="featured__foot">
+    <PostMeta date={date} readingTime={readingTime(post)} draft={draft} />
+    <a class="featured__more" href={url(`/blog/${post.id}`)}>
+      read <Icon name="arrow-right" size={14} />
+    </a>
+  </div>
+</article>
+
+<style>
+  .featured {
+    position: relative;
+    padding: 22px 24px;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--cat) 9%, var(--surface)) 0%,
+      var(--surface) 60%
+    );
+    border: 1px solid color-mix(in srgb, var(--cat) 35%, var(--border));
+    border-left: 3px solid var(--cat);
+    border-radius: var(--radius);
+  }
+
+  .featured__label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .featured__pin {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--cat);
+  }
+
+  .featured__title {
+    font-size: clamp(1.15rem, 3vw, 1.4rem);
+  }
+
+  .featured__title a {
+    color: var(--text);
+  }
+
+  .featured__title a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .featured__desc {
+    margin: 10px 0 16px;
+    color: var(--text-muted);
+  }
+
+  .featured__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .featured__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+  }
+</style>

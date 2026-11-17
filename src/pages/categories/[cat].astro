@@ -1,0 +1,115 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import PostList from '@/components/PostList.astro';
+import { CATEGORIES, CATEGORY_SLUGS, type Category } from '@/consts';
+import { getPostsByCategory } from '@/utils/posts';
+import { url } from '@/utils/url';
+
+export const getStaticPaths = (() =>
+  CATEGORY_SLUGS.map((cat) => ({ params: { cat } }))) satisfies GetStaticPaths;
+
+const cat = Astro.params.cat as Category;
+const meta = CATEGORIES[cat];
+const posts = await getPostsByCategory(cat);
+---
+
+<BaseLayout title={`Category: ${meta.label}`} description={meta.description}>
+  <div class="container narrow" style={`--cat: var(--cat-${cat})`}>
+    <header class="page-header">
+      <p class="eyebrow">
+        <a href={url('/categories')}>categories</a>/<span class="current">{cat}</span>
+      </p>
+      <h1 class="cat-title">
+        <span class="cat-title__icon"><Icon name={meta.icon} size={22} /></span>
+        {meta.label}
+      </h1>
+      <p>{meta.description} <span class="count">[{posts.length} {posts.length === 1 ? 'post' : 'posts'}]</span></p>
+    </header>
+
+    <nav class="cat-switch" aria-label="Other categories">
+      {
+        CATEGORY_SLUGS.map((slug) => (
+          <a
+            href={url(`/categories/${slug}`)}
+            class:list={{ active: slug === cat }}
+            aria-current={slug === cat ? 'page' : undefined}
+          >
+            {slug}
+          </a>
+        ))
+      }
+    </nav>
+
+    <PostList posts={posts} />
+  </div>
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: 860px;
+  }
+
+  .eyebrow a {
+    color: var(--text-faint);
+  }
+
+  .eyebrow a:hover {
+    color: var(--accent);
+  }
+
+  .eyebrow .current {
+    color: var(--cat);
+  }
+
+  .cat-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .cat-title__icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    color: var(--cat);
+    background: color-mix(in srgb, var(--cat) 12%, transparent);
+    border-radius: var(--radius);
+  }
+
+  .count {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--cat);
+  }
+
+  .cat-switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 28px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+
+  .cat-switch a {
+    padding: 4px 10px;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  .cat-switch a:hover {
+    text-decoration: none;
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+
+  .cat-switch a.active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+</style>

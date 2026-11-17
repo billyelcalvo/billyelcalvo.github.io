@@ -1,0 +1,73 @@
+---
+import { slugify } from '@/utils/posts';
+import { url } from '@/utils/url';
+
+interface Props {
+  tags: string[];
+  active?: string;
+}
+
+const { tags, active } = Astro.props;
+---
+
+{
+  tags.length > 0 && (
+    <ul class="tags" aria-label="Tags">
+      {tags.map((tag) => (
+        <li>
+          <a
+            href={url(`/tags/${slugify(tag)}`)}
+            class:list={['tag', { active: active === slugify(tag) }]}
+          >
+            <span class="tag__hash">#</span>
+            {tag}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 8px;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    line-height: 1;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .tag:hover,
+  .tag.active {
+    text-decoration: none;
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+
+  .tag__hash {
+    color: var(--text-faint);
+    margin-right: 1px;
+  }
+
+  .tag:hover .tag__hash,
+  .tag.active .tag__hash {
+    color: inherit;
+  }
+</style>

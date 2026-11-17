@@ -1,0 +1,121 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import { CATEGORIES, CATEGORY_SLUGS } from '@/consts';
+import { getPosts } from '@/utils/posts';
+import { url } from '@/utils/url';
+
+const posts = await getPosts();
+const counts = Object.fromEntries(
+  CATEGORY_SLUGS.map((slug) => [slug, posts.filter((p) => p.data.category === slug).length]),
+);
+---
+
+<BaseLayout title="Categories" description="Browse posts by category.">
+  <div class="container">
+    <header class="page-header">
+      <p class="eyebrow">$ tree -d ./categories</p>
+      <h1>Categories</h1>
+      <p>Every post belongs to one of these six sections.</p>
+    </header>
+
+    <ul class="cat-grid">
+      {
+        CATEGORY_SLUGS.map((slug, i) => {
+          const meta = CATEGORIES[slug];
+          const count = counts[slug];
+          return (
+            <li>
+              <a class="cat-card" href={url(`/categories/${slug}`)} style={`--cat: var(--cat-${slug})`}>
+                <div class="cat-card__top">
+                  <span class="cat-card__icon">
+                    <Icon name={meta.icon} size={20} />
+                  </span>
+                  <span class="cat-card__offset">+0x{(i * 0x10).toString(16).padStart(2, '0')}</span>
+                </div>
+                <h2 class="cat-card__name">{meta.label}</h2>
+                <p class="cat-card__desc">{meta.description}</p>
+                <p class="cat-card__count">
+                  {count} {count === 1 ? 'post' : 'posts'}
+                </p>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cat-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--cat);
+    border-radius: var(--radius);
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .cat-card:hover {
+    text-decoration: none;
+    border-color: color-mix(in srgb, var(--cat) 55%, var(--border));
+    border-top-color: var(--cat);
+  }
+
+  .cat-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .cat-card__icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    color: var(--cat);
+    background: color-mix(in srgb, var(--cat) 12%, transparent);
+    border-radius: var(--radius);
+  }
+
+  .cat-card__offset {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-faint);
+  }
+
+  .cat-card__name {
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+
+  .cat-card__desc {
+    flex: 1;
+    margin: 8px 0 16px;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+
+  .cat-card__count {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--cat);
+  }
+</style>

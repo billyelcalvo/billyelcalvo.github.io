@@ -1,0 +1,245 @@
+/* Styles for the Markdown/MDX content of posts. */
+
+.prose {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--text);
+  overflow-wrap: break-word;
+}
+
+.prose > * + * {
+  margin-top: 1.25em;
+}
+
+.prose p,
+.prose ul,
+.prose ol,
+.prose blockquote,
+.prose table {
+  margin-bottom: 0;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+
+.prose h2 {
+  font-size: 1.4rem;
+  margin-top: 2.5em;
+  padding-bottom: 0.4em;
+  border-bottom: 1px solid var(--border);
+}
+
+.prose h2::before {
+  content: '## ';
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+.prose h3 {
+  font-size: 1.15rem;
+  margin-top: 2em;
+}
+
+.prose h3::before {
+  content: '### ';
+  color: var(--accent);
+  opacity: 0.55;
+}
+
+.prose h4 {
+  font-size: 1rem;
+  margin-top: 1.75em;
+}
+
+.prose a {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  text-underline-offset: 3px;
+}
+
+.prose a:hover {
+  text-decoration-color: var(--accent);
+}
+
+.prose strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+}
+
+.prose li + li {
+  margin-top: 0.35em;
+}
+
+.prose li::marker {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+}
+
+.prose blockquote {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0.75em 1.1em;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--text-muted);
+}
+
+.prose blockquote > :first-child {
+  margin-top: 0;
+}
+
+.prose img {
+  display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-inline: auto;
+}
+
+/* Inline code */
+.prose :not(pre) > code {
+  font-size: 0.86em;
+  padding: 0.15em 0.4em;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+}
+
+/* Tablas */
+.prose .table-wrap,
+.prose table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.prose table {
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.prose th,
+.prose td {
+  padding: 0.55em 0.9em;
+  border: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.prose th {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: var(--surface);
+}
+
+/* ==========================================================================
+   Code blocks (Shiki, dual themes)
+   ========================================================================== */
+
+.code-block {
+  position: relative;
+  margin-top: 1.5em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.code-block__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 34px;
+  padding: 0 8px 0 14px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  text-transform: lowercase;
+}
+
+.code-block__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 8px;
+  font: inherit;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.code-block__copy:hover {
+  color: var(--accent);
+  border-color: var(--border);
+}
+
+.code-block__copy[data-copied='true'] {
+  color: var(--accent);
+}
+
+.code-block__copy svg {
+  width: 13px;
+  height: 13px;
+}
+
+.prose pre.astro-code {
+  margin: 0;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-size: 0.86rem;
+  line-height: 1.65;
+  tab-size: 4;
+  background-color: var(--surface) !important;
+}
+
+/* If the script has not wrapped the block yet */
+.prose > pre.astro-code {
+  margin-top: 1.5em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.prose pre.astro-code code {
+  font-size: inherit;
+}
+
+:root:not([data-theme='light']) .astro-code,
+:root:not([data-theme='light']) .astro-code span {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style);
+  font-weight: var(--shiki-dark-font-weight);
+  text-decoration: var(--shiki-dark-text-decoration);
+}
+
+:root[data-theme='light'] .astro-code,
+:root[data-theme='light'] .astro-code span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+  text-decoration: var(--shiki-light-text-decoration);
+}
+
+.prose pre.astro-code::-webkit-scrollbar {
+  height: 8px;
+}
+
+.prose pre.astro-code::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}

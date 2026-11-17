@@ -1,0 +1,83 @@
+---
+import type { Page } from 'astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  page: Page<unknown>;
+}
+
+const { page } = Astro.props;
+const { currentPage, lastPage, url } = page;
+---
+
+{
+  lastPage > 1 && (
+    <nav class="pagination" aria-label="Pagination">
+      {url.prev ? (
+        <a class="pagination__btn" href={url.prev} rel="prev">
+          <Icon name="arrow-left" size={14} /> previous
+        </a>
+      ) : (
+        <span class="pagination__btn disabled" aria-hidden="true">
+          <Icon name="arrow-left" size={14} /> previous
+        </span>
+      )}
+
+      <span class="pagination__info">
+        page <strong>{currentPage}</strong> / {lastPage}
+      </span>
+
+      {url.next ? (
+        <a class="pagination__btn" href={url.next} rel="next">
+          next <Icon name="arrow-right" size={14} />
+        </a>
+      ) : (
+        <span class="pagination__btn disabled" aria-hidden="true">
+          next <Icon name="arrow-right" size={14} />
+        </span>
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 32px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+  }
+
+  .pagination__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 12px;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  a.pagination__btn:hover {
+    text-decoration: none;
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .pagination__btn.disabled {
+    opacity: 0.35;
+  }
+
+  .pagination__info {
+    color: var(--text-faint);
+  }
+
+  .pagination__info strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+</style>

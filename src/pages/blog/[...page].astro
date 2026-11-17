@@ -1,0 +1,39 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Pagination from '@/components/Pagination.astro';
+import PostList from '@/components/PostList.astro';
+import { SITE } from '@/consts';
+import { getPosts, type Post } from '@/utils/posts';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts();
+  return paginate(posts, { pageSize: SITE.postsPerPage });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<Post>;
+}
+
+const { page } = Astro.props;
+const title = page.currentPage > 1 ? `Blog — page ${page.currentPage}` : 'Blog';
+---
+
+<BaseLayout title={title} description="All posts: reversing, pwn, CTFs and more.">
+  <div class="container narrow">
+    <header class="page-header">
+      <p class="eyebrow">$ ls -lt ./posts | wc -l → {page.total}</p>
+      <h1>Blog</h1>
+      <p>Technical notes, writeups and whatever I'm learning along the way.</p>
+    </header>
+
+    <PostList posts={page.data} />
+    <Pagination page={page} />
+  </div>
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: 860px;
+  }
+</style>

@@ -1,0 +1,59 @@
+---
+// Wraps each Shiki code block with a bar showing
+// the language and a copy button.
+---
+
+<script>
+  const COPY_ICON =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const CHECK_ICON =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+
+  const LABELS: Record<string, string> = {
+    asm: 'x86 asm',
+    cpp: 'c++',
+    shellscript: 'bash',
+    shellsession: 'shell',
+    plaintext: 'text',
+  };
+
+  document.querySelectorAll<HTMLPreElement>('.prose pre.astro-code').forEach((pre) => {
+    const lang = pre.dataset.language ?? 'text';
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block';
+
+    const bar = document.createElement('div');
+    bar.className = 'code-block__bar';
+
+    const label = document.createElement('span');
+    label.textContent = LABELS[lang] ?? lang;
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'code-block__copy';
+    button.setAttribute('aria-label', 'Copy code');
+    button.innerHTML = `${COPY_ICON}<span>copy</span>`;
+
+    let timer: number | undefined;
+    button.addEventListener('click', async () => {
+      const code = pre.querySelector('code')?.textContent ?? pre.textContent ?? '';
+      try {
+        await navigator.clipboard.writeText(code.replace(/\n$/, ''));
+        button.dataset.copied = 'true';
+        button.innerHTML = `${CHECK_ICON}<span>copied</span>`;
+      } catch {
+        button.innerHTML = `${COPY_ICON}<span>error</span>`;
+      }
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        button.dataset.copied = 'false';
+        button.innerHTML = `${COPY_ICON}<span>copy</span>`;
+      }, 1800);
+    });
+
+    bar.append(label, button);
+    pre.replaceWith(wrapper);
+    wrapper.append(bar, pre);
+  });
+</script>

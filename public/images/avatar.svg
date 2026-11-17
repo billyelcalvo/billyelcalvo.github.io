@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Avatar placeholder">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f1f23"/>
+      <stop offset="1" stop-color="#18181b"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" fill="url(#g)"/>
+  <g stroke="#27272a" stroke-width="1">
+    <path d="M0 64h256M0 128h256M0 192h256M64 0v256M128 0v256M192 0v256"/>
+  </g>
+  <text x="128" y="118" text-anchor="middle" font-family="ui-monospace, monospace" font-size="64" font-weight="700" fill="#f59e0b">DM</text>
+  <text x="128" y="162" text-anchor="middle" font-family="ui-monospace, monospace" font-size="18" fill="#a1a1aa">0x00</text>
+</svg>

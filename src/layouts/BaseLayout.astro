@@ -1,0 +1,43 @@
+---
+import BaseHead, { type SeoProps } from '@/components/BaseHead.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { SITE } from '@/consts';
+
+type Props = SeoProps;
+---
+
+<!doctype html>
+<html lang={SITE.lang} data-theme="dark">
+  <head>
+    <BaseHead {...Astro.props} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: 16px;
+    top: -48px;
+    z-index: 100;
+    padding: 8px 12px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--on-accent);
+    background: var(--accent);
+    border-radius: var(--radius-sm);
+  }
+
+  .skip-link:focus {
+    top: 12px;
+  }
+</style>

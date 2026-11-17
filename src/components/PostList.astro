@@ -1,0 +1,48 @@
+---
+import type { Post } from '@/utils/posts';
+import PostCard from './PostCard.astro';
+
+interface Props {
+  posts: Post[];
+  activeTag?: string;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { posts, activeTag, headingLevel } = Astro.props;
+---
+
+{
+  posts.length > 0 ? (
+    <ul class="post-list">
+      {posts.map((post) => (
+        <li>
+          <PostCard post={post} activeTag={activeTag} headingLevel={headingLevel} />
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class="empty">
+      <span>// </span>no posts here yet.
+    </p>
+  )
+}
+
+<style>
+  .post-list {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .empty {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--text-faint);
+  }
+
+  .empty span {
+    color: var(--accent);
+  }
+</style>

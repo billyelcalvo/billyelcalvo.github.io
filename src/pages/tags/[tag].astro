@@ -1,0 +1,65 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostList from '@/components/PostList.astro';
+import { getPosts, groupByTag, type Post } from '@/utils/posts';
+import { url } from '@/utils/url';
+
+export const getStaticPaths = (async () => {
+  const tags = groupByTag(await getPosts());
+  return Array.from(tags, ([tag, { name, posts }]) => ({
+    params: { tag },
+    props: { name, posts },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  name: string;
+  posts: Post[];
+}
+
+const { tag } = Astro.params;
+const { name, posts } = Astro.props;
+---
+
+<BaseLayout title={`#${name}`} description={`Posts tagged ${name}.`}>
+  <div class="container narrow">
+    <header class="page-header">
+      <p class="eyebrow">
+        <a href={url('/tags')}>tags</a>/<span>{tag}</span>
+      </p>
+      <h1><span class="hash">#</span>{name}</h1>
+      <p>{posts.length} {posts.length === 1 ? 'post' : 'posts'} tagged <code>{name}</code>.</p>
+    </header>
+
+    <PostList posts={posts} activeTag={tag} />
+  </div>
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: 860px;
+  }
+
+  .eyebrow a {
+    color: var(--text-faint);
+  }
+
+  .eyebrow a:hover {
+    color: var(--accent);
+  }
+
+  .eyebrow span {
+    color: var(--accent);
+  }
+
+  .hash {
+    color: var(--accent);
+    margin-right: 2px;
+  }
+
+  code {
+    font-size: 0.9em;
+    color: var(--accent);
+  }
+</style>

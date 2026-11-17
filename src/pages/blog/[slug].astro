@@ -1,0 +1,196 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getImage, Image } from 'astro:assets';
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CategoryBadge from '@/components/CategoryBadge.astro';
+import CodeBlocks from '@/components/CodeBlocks.astro';
+import PostMeta from '@/components/PostMeta.astro';
+import PostNav from '@/components/PostNav.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import TagList from '@/components/TagList.astro';
+import { getPosts, readingTime, type Post } from '@/utils/posts';
+import '@/styles/prose.css';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  // posts are ordered newest to oldest.
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, next: posts[i - 1], prev: posts[i + 1] },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  post: Post;
+  prev?: Post;
+  next?: Post;
+}
+
+const { post, prev, next } = Astro.props;
+const { title, description, date, category, tags, cover, coverAlt, draft } = post.data;
+const { Content, headings } = await render(post);
+const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
+
+// Open Graph image: cover exported to 1200px PNG (social platforms do not accept SVG/AVIF).
+const ogImage = cover
+  ? new URL((await getImage({ src: cover, format: 'png', width: 1200 })).src, Astro.site).href
+  : undefined;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  type="article"
+  publishedTime={date}
+  tags={tags}
+  image={ogImage}
+  noindex={draft}
+>
+  <div class:list={['container', 'post-layout', { 'has-toc': hasToc }]}>
+    <article class="post">
+      <header class="post__header">
+        <div class="post__meta">
+          <CategoryBadge category={category} />
+          <PostMeta date={date} readingTime={readingTime(post)} draft={draft} />
+        </div>
+        <h1 class="post__title">{title}</h1>
+        <p class="post__desc">{description}</p>
+        <TagList tags={tags} />
+      </header>
+
+      {
+        cover && (
+          <Image
+            class="post__cover"
+            src={cover}
+            alt={coverAlt ?? ''}
+            widths={[640, 960, 1280]}
+            sizes="(max-width: 860px) 100vw, 760px"
+            loading="eager"
+          />
+        )
+      }
+
+      {
+        hasToc && (
+          <details class="toc-mobile">
+            <summary>table of contents</summary>
+            <TableOfContents headings={headings} />
+          </details>
+        )
+      }
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <PostNav prev={prev} next={next} />
+    </article>
+
+    {
+      hasToc && (
+        <aside class="post__aside">
+          <div class="post__aside-inner">
+            <TableOfContents headings={headings} />
+          </div>
+        </aside>
+      )
+    }
+  </div>
+
+  <CodeBlocks />
+</BaseLayout>
+
+<style>
+  .post-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 56px;
+  }
+
+  .post {
+    min-width: 0;
+    max-width: 760px;
+  }
+
+  .post__header {
+    padding-bottom: 28px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .post__meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .post__title {
+    font-size: clamp(1.6rem, 4.5vw, 2.3rem);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .post__desc {
+    margin: 14px 0 20px;
+    font-size: 1.08rem;
+    color: var(--text-muted);
+  }
+
+  .post__cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 36px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .post__aside {
+    display: none;
+  }
+
+  .toc-mobile {
+    margin-bottom: 32px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .toc-mobile summary {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .toc-mobile[open] summary {
+    margin-bottom: 14px;
+  }
+
+  @media (min-width: 1080px) {
+    .post-layout.has-toc {
+      grid-template-columns: minmax(0, 760px) 240px;
+      justify-content: space-between;
+    }
+
+    .post__aside {
+      display: block;
+    }
+
+    .post__aside-inner {
+      position: sticky;
+      top: calc(var(--nav-h) + 32px);
+      max-height: calc(100vh - var(--nav-h) - 64px);
+      overflow-y: auto;
+    }
+
+    .toc-mobile {
+      display: none;
+    }
+  }
+</style>
