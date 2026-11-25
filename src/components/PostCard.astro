@@ -17,7 +17,7 @@ const { title, description, date, category, tags, draft } = post.data;
 const href = url(`/blog/${post.id}`);
 ---
 
-<article class="post-card" style={`--cat: var(--cat-${category})`}>
+<article class="post-card" style={`--cat: var(--cat-${category})`} data-post-href={href}>
   <div class="post-card__top">
     <PostMeta date={date} readingTime={readingTime(post)} draft={draft} />
     <CategoryBadge category={category} />
@@ -60,19 +60,9 @@ const href = url(`/blog/${post.id}`);
     opacity: 1;
   }
 
-  /* Make the whole card clickable: the title link stretches over it. */
-  .post-card__title a::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-  }
-
-  /* Keep the category badge and tags clickable above the overlay. */
-  .post-card :global(a.category-badge),
-  .post-card :global(a.tag) {
-    position: relative;
-    z-index: 2;
+  /* The whole card is clickable (see the script below). */
+  .post-card[data-post-href] {
+    cursor: pointer;
   }
 
   .post-card__top {
@@ -111,3 +101,31 @@ const href = url(`/blog/${post.id}`);
     }
   }
 </style>
+
+<script>
+  // Make any element with data-post-href fully clickable, while keeping inner
+  // links working and still allowing text selection. Covers PostCard + FeaturedPost.
+  document.querySelectorAll<HTMLElement>('[data-post-href]').forEach((card) => {
+    if (card.dataset.cardLinked) return;
+    card.dataset.cardLinked = 'true';
+
+    card.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('a, button')) return; // let real links/buttons work
+      if (window.getSelection()?.toString()) return; // don't hijack text selection
+      const href = card.dataset.postHref;
+      if (!href) return;
+      if (e.metaKey || e.ctrlKey || e.button === 1) window.open(href, '_blank');
+      else window.location.href = href;
+    });
+
+    // middle-click opens in a new tab
+    card.addEventListener('auxclick', (e) => {
+      if (e.button !== 1) return;
+      const target = e.target as HTMLElement;
+      if (target.closest('a, button')) return;
+      const href = card.dataset.postHref;
+      if (href) window.open(href, '_blank');
+    });
+  });
+</script>

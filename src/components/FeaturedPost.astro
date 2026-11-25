@@ -14,7 +14,7 @@ const { post } = Astro.props;
 const { title, description, date, category, draft } = post.data;
 ---
 
-<article class="featured" style={`--cat: var(--cat-${category})`}>
+<article class="featured" style={`--cat: var(--cat-${category})`} data-post-href={url(`/blog/${post.id}`)}>
   <div class="featured__label">
     <span class="featured__pin">[pinned]</span>
     <CategoryBadge category={category} />
@@ -71,19 +71,9 @@ const { title, description, date, category, draft } = post.data;
     text-decoration: none;
   }
 
-  /* Make the whole card clickable via the title link. */
-  .featured__title a::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-  }
-
-  /* Keep the category badge and the "read" link above the overlay. */
-  .featured :global(a.category-badge),
-  .featured__more {
-    position: relative;
-    z-index: 2;
+  /* The whole card is clickable (shared script in PostCard). */
+  .featured[data-post-href] {
+    cursor: pointer;
   }
 
   .featured__desc {
