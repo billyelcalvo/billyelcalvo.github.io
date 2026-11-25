@@ -2,14 +2,14 @@
 
 export const ABOUT = [
   "I'm Diego Mora, a Software Engineering student at Universidad Peruana de Ciencias Aplicadas (UPC), in Lima, Peru.",
-  'What hooks me most is understanding how software works at the lowest level: opening a binary in a disassembler, following execution in a debugger and reconstructing the original logic. That curiosity runs through everything I focus on — reverse engineering, game hacking, malware development and Windows internals — which I sharpen mostly by playing CTFs.',
+  'What hooks me most is understanding how software works at the lowest level: opening a binary in a disassembler, following execution in a debugger and reconstructing the original logic. That curiosity runs through everything I focus on: reverse engineering, game hacking, malware development and Windows internals, which I sharpen mostly by playing CTFs.',
   'I also write some backend code in TypeScript when a project calls for it, but low-level security research is where I spend most of my time.',
 ];
 
 export const INTERESTS = [
   { title: 'Reverse engineering', text: 'Static and dynamic analysis of binaries, disassembly and recovering program logic.' },
   { title: 'Game hacking', text: 'Game memory, anti-cheat internals and how game clients can be analyzed and modified.' },
-  { title: 'Malware development', text: 'Offensive tooling and techniques —loaders, injection, evasion— studied in isolated labs.' },
+  { title: 'Malware development', text: 'Offensive tooling and techniques (loaders, injection, evasion) studied in isolated labs.' },
   { title: 'Windows internals', text: 'Processes, the PE format, the Win32/NT API and how Windows works under the hood.' },
   { title: 'Binary exploitation', text: 'Stack/heap overflows, ROP, format strings and modern mitigations.' },
   { title: 'CTFs', text: 'Competing, learning and documenting reversing and pwn writeups.' },

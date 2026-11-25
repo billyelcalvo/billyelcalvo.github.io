@@ -9,7 +9,7 @@ coverAlt: 'Ghidra view of the binary showing the hardcoded secret'
 draft: false
 ---
 
-Continuing the series — now it's `autorev 1`'s turn. The category is medium, but it's CyLab-level, so it feels more like an easy CTF.
+Continuing the series, now it's `autorev 1`'s turn. The category is medium, but it's CyLab-level, so it feels more like an easy CTF.
 
 ![Challenge intro](../../assets/blog/auto-rev-1/intro.png)
 
@@ -17,7 +17,7 @@ It works with an instance, so press the button and try to connect to it.
 
 ![Connecting to the instance](../../assets/blog/auto-rev-1/connect.png)
 
-Great — the intro explains it perfectly. It seems that to complete the challenge you need to script every round to get the binary.
+Great, the intro explains it perfectly. It seems that to complete the challenge you need to script every round to get the binary.
 
 ```
 7f 45 4c 46
@@ -33,7 +33,7 @@ Copy all of that into a txt file and use the command:
 xxd -r -p binary.txt > result.out
 ```
 
-Now you have the ELF — let's look at it in Ghidra.
+Now you have the ELF, let's look at it in Ghidra.
 
 ![The binary in Ghidra](../../assets/blog/auto-rev-1/ghidra.png)
 
@@ -56,7 +56,7 @@ with open('binary.txt', 'r') as f:
 print(data[8828:8842])
 ```
 
-This prints the secret and the signature — so it works. Now we go straight to the script for the challenge:
+This prints the secret and the signature, so it works. Now we go straight to the script for the challenge:
 
 ```python
 from pwn import *

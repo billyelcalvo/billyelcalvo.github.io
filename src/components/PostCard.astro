@@ -60,6 +60,21 @@ const href = url(`/blog/${post.id}`);
     opacity: 1;
   }
 
+  /* Make the whole card clickable: the title link stretches over it. */
+  .post-card__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  /* Keep the category badge and tags clickable above the overlay. */
+  .post-card :global(a.category-badge),
+  .post-card :global(a.tag) {
+    position: relative;
+    z-index: 2;
+  }
+
   .post-card__top {
     display: flex;
     align-items: center;

@@ -16,7 +16,7 @@ interface Props {
 }
 
 const { page } = Astro.props;
-const title = page.currentPage > 1 ? `Blog — page ${page.currentPage}` : 'Blog';
+const title = page.currentPage > 1 ? `Blog (page ${page.currentPage})` : 'Blog';
 ---
 
 <BaseLayout title={title} description="All posts: reversing, pwn, CTFs and more.">

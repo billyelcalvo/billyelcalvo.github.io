@@ -19,7 +19,7 @@ First of all, let's find out what kind of file we're working with:
 file system.out
 ```
 
-Classic answer — but at least it's not stripped, so hopefully we can read the function names.
+Classic answer, but at least it's not stripped, so hopefully we can read the function names.
 
 ![Output of the file command](../../assets/blog/secure-password-database/file-output.png)
 
@@ -41,7 +41,7 @@ Looks normal. You can try `ltrace`, but you probably won't find anything.
 
 There are two approaches to this exercise. I was looking directly for a secret or token creation, but I ended up figuring out that the only input that actually matters is the last one.
 
-Since you can see some variables in Ghidra, I used a debugger to look at a comparison — and it actually works.
+Since you can see some variables in Ghidra, I used a debugger to look at a comparison, and it actually works.
 
 ![A revealing compare in the debugger](../../assets/blog/secure-password-database/debugger-compare.png)
 
@@ -49,9 +49,9 @@ Basically, I make a hypothesis: if you look at the code, there's just an `if` th
 
 ![Inspecting the registers](../../assets/blog/secure-password-database/registers.png)
 
-To me it looks obvious that it comes from some input — and then you realize it actually takes the hash number you're typing in.
+To me it looks obvious that it comes from some input, and then you realize it actually takes the hash number you're typing in.
 
-Then I asked myself whether this is dynamic — i.e. whether the hex value we don't know changes. But if you try different inputs it doesn't change, so it's hardcoded.
+Then I asked myself whether this is dynamic, i.e. whether the hex value we don't know changes. But if you try different inputs it doesn't change, so it's hardcoded.
 
 ![Confirming the value is hardcoded](../../assets/blog/secure-password-database/hardcoded.png)
 
@@ -59,13 +59,13 @@ I'm not showing all the pseudocode yet, because at the end I'll do a quick revie
 
 ![Entering the value in decimal](../../assets/blog/secure-password-database/decimal-input.png)
 
-And that's it — but this is the approach I took at first. Then I realized it isn't the most "reversing" way to solve it.
+And that's it, but this is the approach I took at first. Then I realized it isn't the most "reversing" way to solve it.
 
 ![The flag via the first approach](../../assets/blog/secure-password-database/flag-first-approach.png)
 
 ## Understanding the code
 
-I don't want to spend too long here, so we won't go line by line — just the important parts.
+I don't want to spend too long here, so we won't go line by line, just the important parts.
 
 ![copyPassword pseudocode](../../assets/blog/secure-password-database/copypassword-pseudocode.png)
 
@@ -81,7 +81,7 @@ The program trusts us with the length of the input we entered earlier. So what h
 
 ![Over-reading memory with an oversized length](../../assets/blog/secure-password-database/overread.png)
 
-Of course, you can see all the memory up to index `0x5a` — but that doesn't matter, because you've already read the `obf_bytes`.
+Of course, you can see all the memory up to index `0x5a`, but that doesn't matter, because you've already read the `obf_bytes`.
 
 ![The check that gates the flag](../../assets/blog/secure-password-database/check-pseudocode.png)
 
@@ -89,7 +89,7 @@ Here we finally see what the program needs to unlock the flag, and this leads us
 
 ![Jumping into make_secret](../../assets/blog/secure-password-database/make-secret.png)
 
-Then we go into `make_secret`, where the argument passed (`local123`) stores the `obf_bytes` — which, conveniently, are the same `obf_bytes` we can read through the vulnerability. It then passes `param_1` to the `hash` function.
+Then we go into `make_secret`, where the argument passed (`local123`) stores the `obf_bytes`, which, conveniently, are the same `obf_bytes` we can read through the vulnerability. It then passes `param_1` to the `hash` function.
 
 ![The hashing operation](../../assets/blog/secure-password-database/hash-operation.png)
 

@@ -25,7 +25,7 @@ const {
   noindex = false,
 } = Astro.props as SeoProps;
 
-const fullTitle = title ? `${title} · ${SITE.title}` : `${SITE.title} — reversing, pwn & CTFs`;
+const fullTitle = title ? `${title} · ${SITE.title}` : `${SITE.title} · reversing, pwn & CTFs`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image.startsWith('http') ? image : url(image), Astro.site);
 ---

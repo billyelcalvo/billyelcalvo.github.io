@@ -9,7 +9,7 @@ coverAlt: 'Ghidra pseudocode of the serial validation routine'
 draft: false
 ---
 
-Two weeks ago I took part in a CTF called CSH, organized by UTEC's cybersecurity team. There were plenty of interesting challenges; I focused on reversing and pwn — right now I'm putting more effort into rev while getting the basics of pwn down.
+Two weeks ago I took part in a CTF called CSH, organized by UTEC's cybersecurity team. There were plenty of interesting challenges; I focused on reversing and pwn, right now I'm putting more effort into rev while getting the basics of pwn down.
 
 ## The challenge
 
@@ -21,13 +21,13 @@ It's an ELF. Now let's try to run it directly, just to test.
 
 ![Running the binary with no valid serial](../../assets/blog/chakana-seal/run-test.png)
 
-Interesting — we can pass a serial as an argument. The first thing that comes to mind is to try `ltrace`; maybe we can leak the serial.
+Interesting, we can pass a serial as an argument. The first thing that comes to mind is to try `ltrace`; maybe we can leak the serial.
 
 ![ltrace output of the binary](../../assets/blog/chakana-seal/ltrace.png)
 
 Nothing important here. But I figured that if we can find the length, there's a chance to get the serial.
 
-To be honest, this can be read directly by opening Ghidra and looking at what's going on, and sometimes `ltrace` is faster, so I tried it that way first — but as we'll see, I was wrong.
+To be honest, this can be read directly by opening Ghidra and looking at what's going on, and sometimes `ltrace` is faster, so I tried it that way first, but as we'll see, I was wrong.
 
 ```python
 from pwn import *
@@ -51,7 +51,7 @@ I was expecting a `strcmp` or something. Right after that I realized I'd need Gh
 
 ![Ghidra pseudocode of the validation function](../../assets/blog/chakana-seal/ghidra-pseudocode.png)
 
-If you read carefully, you'll notice the `if` statements are the real deal: starting from `'C'`, each byte is a different calculation — xoring or adding.
+If you read carefully, you'll notice the `if` statements are the real deal: starting from `'C'`, each byte is a different calculation, xoring or adding.
 
 ```python
 serial = [ord('C')]
